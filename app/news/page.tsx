@@ -3,6 +3,8 @@ import Link from "next/link";
 import NewsList from "@/app/components/NewsList";
 import { getNews } from "@/app/lib/notion";
 
+export const revalidate = 600;
+
 /**
  * News page
  * URL: /news

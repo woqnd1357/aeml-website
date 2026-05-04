@@ -71,7 +71,8 @@ export type JournalArticle = {
   doi: string | null;
   pdfUrl: string | null;
   type: "Journal" | "Conference";
-  status: "Published" | "Under Review";
+  /** Notion Status / Publication Status select (or status) option name as stored in DB. */
+  status: string;
   featured: boolean;
   order: number;
 };
@@ -323,12 +324,6 @@ function normalizeArticleType(s: string): "Journal" | "Conference" {
   const u = s.toLowerCase();
   if (u.includes("conference")) return "Conference";
   return "Journal";
-}
-
-function normalizeArticleStatus(s: string): "Published" | "Under Review" {
-  const u = s.toLowerCase();
-  if (u.includes("review")) return "Under Review";
-  return "Published";
 }
 
 function normalizePatentCountry(s: string): Patent["country"] {
@@ -811,68 +806,115 @@ export async function getNews(limit?: number): Promise<NewsItem[]> {
   }
 }
 
+/** Notion Select or Status property: read display name from either shape. */
+function extractSelectOrStatusName(property: unknown): string {
+  if (property == null) return "";
+  const p = property as {
+    select?: { name?: string | null } | null;
+    status?: { name?: string | null } | null;
+  };
+  const fromSelect = (p.select?.name ?? "").trim();
+  if (fromSelect) return fromSelect;
+  return (p.status?.name ?? "").trim();
+}
+
+function extractJournalArticleStatus(props: NotionProps): string {
+  const cells: unknown[] = [
+    firstProp(props, "Status", "Publication Status", "Paper Status", "상태"),
+    props["Status" as keyof NotionProps],
+    props["status" as keyof NotionProps],
+    props["STATUS" as keyof NotionProps],
+    props["Publication Status" as keyof NotionProps],
+  ];
+
+  for (const cell of cells) {
+    if (cell == null) continue;
+    let t = extractSelectOrStatusName(cell);
+    if (t) return t;
+    t = extractSelect(cell).trim();
+    if (t) return t;
+    t = extractRichText(cell).trim();
+    if (t) return t;
+    t = extractAny(cell).trim();
+    if (t) return t;
+  }
+  return "";
+}
+
 export async function getJournalArticles(): Promise<JournalArticle[]> {
   try {
     const id = DB.articles;
     if (!id) return [];
-    let response: DatabaseQueryResponse;
+
+    const mapArticle = (page: PageObjectResponse): JournalArticle => {
+      const props = page.properties as NotionProps;
+      const authorsRaw =
+        extractRichText(firstProp(props, "Authors", "Author", "저자")) ||
+        extractTitle(firstProp(props, "Authors", "Author"));
+      const authors = authorsRaw
+        .split(/[,;]\s*/)
+        .map((a) => a.trim())
+        .filter(Boolean);
+
+      const yearProp = firstProp(props, "Year", "Publication Year", "연도");
+      const yearNum = extractNumber(yearProp) || extractYearFromDate(yearProp);
+
+      const statusRaw = extractJournalArticleStatus(props);
+      const statusFinal = statusRaw.trim() || "Published";
+
+      return {
+        id: page.id,
+        title:
+          extractTitle(firstProp(props, "Title", "Paper Title", "제목")) ||
+          extractTitle(props["title" as keyof NotionProps]),
+        authors: authors.length ? authors : [],
+        journal:
+          extractRichText(firstProp(props, "Journal", "Venue", "저널")) ||
+          extractSelect(firstProp(props, "Journal", "Venue")) ||
+          "",
+        year: yearNum,
+        volume:
+          extractRichText(firstProp(props, "Volume", "Vol.", "권호")) ||
+          extractTitle(firstProp(props, "Volume", "Issue")) ||
+          "",
+        doi: (() => {
+          const u = extractUrl(firstProp(props, "DOI", "Doi"));
+          return u || null;
+        })(),
+        pdfUrl: (() => {
+          const u = extractUrl(firstProp(props, "PDF", "Pdf", "PDF URL"));
+          return u || null;
+        })(),
+        type: normalizeArticleType(
+          extractSelect(firstProp(props, "Type", "Kind", "유형")) || "Journal",
+        ),
+        status: statusFinal,
+        featured: extractCheckbox(firstProp(props, "Featured", "Featured?", "Pick")),
+        order: extractNumber(firstProp(props, "Order", "Sort")),
+      };
+    };
+
+    let articles: JournalArticle[];
+
     try {
-      response = await queryDatabase(id, {
-        sorts: [{ property: "Order", direction: "descending" }],
+      const response = await queryDatabase(id, {
+        sorts: [
+          { property: "Year", direction: "descending" },
+          { property: "Order", direction: "descending" },
+        ],
       });
-    } catch {
-      response = await queryDatabase(id, {
-        sorts: [{ property: "Year", direction: "descending" }],
+      articles = fullPageResults(response.results).map(mapArticle);
+    } catch (sortError) {
+      console.warn("Sort failed, fetching without sort:", sortError);
+      const response = await queryDatabase(id, {});
+      articles = fullPageResults(response.results).map(mapArticle);
+      articles.sort((a, b) => {
+        if ((b.year || 0) !== (a.year || 0)) return (b.year || 0) - (a.year || 0);
+        return (b.order || 0) - (a.order || 0);
       });
     }
 
-    return fullPageResults(response.results).map((page) => {
-        const props = page.properties as NotionProps;
-        const authorsRaw =
-          extractRichText(firstProp(props, "Authors", "Author", "저자")) ||
-          extractTitle(firstProp(props, "Authors", "Author"));
-        const authors = authorsRaw
-          .split(/[,;]\s*/)
-          .map((a) => a.trim())
-          .filter(Boolean);
-
-        const yearProp = firstProp(props, "Year", "Publication Year", "연도");
-        const yearNum = extractNumber(yearProp) || extractYearFromDate(yearProp);
-
-        return {
-          id: page.id,
-          title:
-            extractTitle(firstProp(props, "Title", "Paper Title", "제목")) ||
-            extractTitle(props["title" as keyof NotionProps]),
-          authors: authors.length ? authors : [],
-          journal:
-            extractRichText(firstProp(props, "Journal", "Venue", "저널")) ||
-            extractSelect(firstProp(props, "Journal", "Venue")) ||
-            "",
-          year: yearNum,
-          volume:
-            extractRichText(firstProp(props, "Volume", "Vol.", "권호")) ||
-            extractTitle(firstProp(props, "Volume", "Issue")) ||
-            "",
-          doi: (() => {
-            const u = extractUrl(firstProp(props, "DOI", "Doi"));
-            return u || null;
-          })(),
-          pdfUrl: (() => {
-            const u = extractUrl(firstProp(props, "PDF", "Pdf", "PDF URL"));
-            return u || null;
-          })(),
-          type: normalizeArticleType(
-            extractSelect(firstProp(props, "Type", "Kind", "유형")) || "Journal",
-          ),
-          status: normalizeArticleStatus(
-            extractSelect(firstProp(props, "Status", "Publication Status", "상태")) ||
-              "Published",
-          ),
-          featured: extractCheckbox(firstProp(props, "Featured", "Featured?", "Pick")),
-          order: extractNumber(firstProp(props, "Order", "Sort")),
-        };
-      });
+    return articles;
   } catch (error) {
     console.error("Failed to fetch journal articles:", error);
     return [];

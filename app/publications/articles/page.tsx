@@ -3,6 +3,8 @@ import Link from "next/link";
 import ArticlesList from "@/app/components/ArticlesList";
 import { getJournalArticles } from "@/app/lib/notion";
 
+export const revalidate = 600;
+
 /**
  * Journal Articles page
  * URL: /publications/articles

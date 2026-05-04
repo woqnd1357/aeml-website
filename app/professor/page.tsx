@@ -1,5 +1,44 @@
+import type { ReactNode } from "react";
+
 import { EmailCopyButton } from "@/app/components/EmailCopyButton";
 import { getProfessor } from "@/app/lib/notion";
+
+export const revalidate = 600;
+
+const HIGHLIGHT_KEYWORDS = [
+  "Postdoctoral Scholar",
+  "Assistant Professor",
+  "Associate Professor",
+  "Professor",
+  "Postdoc",
+  "Ph.D.",
+  "M.S.",
+  "B.S.",
+] as const;
+
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlightKeywords(text: string): ReactNode {
+  if (!text) return text;
+
+  const keywords: string[] = [...HIGHLIGHT_KEYWORDS];
+  const pattern = keywords.map(escapeRegex).join("|");
+  const regex = new RegExp(`(${pattern})`, "g");
+  const parts = text.split(regex);
+
+  return parts.map((part, i) => {
+    if (keywords.includes(part)) {
+      return (
+        <strong key={i} className="font-bold text-[#1A1A1A]">
+          {part}
+        </strong>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
 
 /**
  * Professor page
@@ -171,11 +210,13 @@ export default async function ProfessorPage() {
                 className="flex flex-col md:flex-row md:justify-between md:items-start gap-4"
               >
                 <div>
-                  <h4 className="text-xl font-bold text-[#1A1A1A] mb-1">
-                    {row.degree?.trim() || "Education"}
-                  </h4>
+                  {row.degree?.trim() ? (
+                    <h4 className="mb-1 text-xl text-[#1A1A1A]">
+                      {highlightKeywords(row.degree.trim())}
+                    </h4>
+                  ) : null}
                   {row.school?.trim() ? (
-                    <p className="text-lg text-[#666666]">{row.school}</p>
+                    <p className="text-lg text-[#666666]">{highlightKeywords(row.school.trim())}</p>
                   ) : null}
                 </div>
                 {row.year?.trim() ? (
@@ -203,11 +244,15 @@ export default async function ProfessorPage() {
                 className="flex flex-col md:flex-row md:justify-between md:items-start gap-4"
               >
                 <div>
-                  <h4 className="text-xl font-bold text-[#1A1A1A] mb-1">
-                    {row.position || "Role"}
-                  </h4>
-                  {row.institution ? (
-                    <p className="text-lg text-[#666666]">{row.institution}</p>
+                  {row.position?.trim() ? (
+                    <h4 className="mb-1 text-xl text-[#1A1A1A]">
+                      {highlightKeywords(row.position.trim())}
+                    </h4>
+                  ) : null}
+                  {row.institution?.trim() ? (
+                    <p className="text-lg text-[#666666]">
+                      {highlightKeywords(row.institution.trim())}
+                    </p>
                   ) : null}
                 </div>
                 {row.period ? (

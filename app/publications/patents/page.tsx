@@ -3,6 +3,8 @@ import Link from "next/link";
 import PatentsList from "@/app/components/PatentsList";
 import { getPatents } from "@/app/lib/notion";
 
+export const revalidate = 600;
+
 /**
  * Patents page
  * URL: /publications/patents

@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Advanced Energy Materials Laboratory at Hongik University, led by Professor Dongwook Lee. Engineering advanced materials for next-generation energy storage.",
 };
 
+export const revalidate = 600;
+
 export default async function RootLayout({
   children,
 }: Readonly<{

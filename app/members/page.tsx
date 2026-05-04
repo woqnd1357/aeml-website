@@ -1,5 +1,7 @@
 import { getMembers, type Member } from "@/app/lib/notion";
 
+export const revalidate = 600;
+
 /**
  * Members page
  * URL: /members

@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { getResearchTopics, type ResearchTopic } from "@/app/lib/notion";
 
+export const revalidate = 600;
+
 /**
  * Research page
  * URL: /research

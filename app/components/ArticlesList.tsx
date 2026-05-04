@@ -1,5 +1,9 @@
 "use client";
 
+// Status filters follow Status values from the Notion database automatically.
+// To add a new Status option: Notion DB > Status property > add option.
+// Examples: "Published", "Under Review", "Under Peer-Review", "In Preparation", etc.
+
 import Link from "next/link";
 import { useState } from "react";
 
@@ -10,7 +14,7 @@ function isAppInternalPath(href: string): boolean {
   return t.startsWith("/") && !t.startsWith("//");
 }
 
-const STATUS_ORDER = ["Published", "Under Review"];
+const STATUS_ORDER = ["Published", "Under Peer-Review", "Under Review"];
 
 function sortStatuses(statuses: string[]): string[] {
   return [...statuses].sort((a, b) => {
@@ -155,7 +159,7 @@ export default function ArticlesList({ articles }: { articles: JournalArticle[] 
   const yearFilters = recentYears.filter((y) => usedYears.includes(y));
   const hasEarlier = usedYears.some((y) => y < currentYear - 3);
 
-  const filteredArticles = articles.filter((article) => {
+  const filteredArticles = [...articles.filter((article) => {
     if (selectedStatus !== "All" && article.status !== selectedStatus) {
       return false;
     }
@@ -167,6 +171,9 @@ export default function ArticlesList({ articles }: { articles: JournalArticle[] 
       }
     }
     return true;
+  })].sort((a, b) => {
+    if ((b.year || 0) !== (a.year || 0)) return (b.year || 0) - (a.year || 0);
+    return (b.order || 0) - (a.order || 0);
   });
 
   return (
