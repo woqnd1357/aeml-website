@@ -1,3 +1,4 @@
+import RecruitmentBanner from "@/app/components/RecruitmentBanner";
 import HeroSection from "@/app/components/HeroSection";
 import ResearchTopics from "@/app/components/ResearchTopics";
 import { getResearchTopics } from "@/app/lib/notion";
@@ -16,6 +17,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <RecruitmentBanner />
       <HeroSection />
       <ResearchTopics topics={featuredTopics} />
     </>

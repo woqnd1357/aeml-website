@@ -80,6 +80,166 @@ export default function ContactPage() {
           </div>
         </section>
 
+        {/* 대학원생 모집 (JOIN US) — 배너/팝업이 이 위치(#join)로 이동 */}
+        <section
+          id="join"
+          className="mx-auto w-full max-w-[1440px] scroll-mt-28 px-8 py-8 lg:px-16 lg:py-16"
+        >
+          <div className="mx-auto max-w-[1000px] border border-[#E5E5E5] bg-white p-10 lg:p-12">
+            {/* 라벨 */}
+            <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#0047BB]">
+              JOIN US
+            </h3>
+            <div className="mb-6 h-0.5 w-10 bg-[#0047BB]" />
+
+            {/* 제목 + 상시 모집 배지 */}
+            <div className="mb-2 flex flex-wrap items-center gap-3">
+              <h2 className="text-3xl font-extrabold tracking-tight text-[#1A1A1A] lg:text-4xl">
+                대학원생 모집
+              </h2>
+              <span className="inline-flex items-center rounded-full bg-[#FEF3C7] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#92400E]">
+                상시 모집 · Always Open
+              </span>
+            </div>
+            <p className="mb-10 text-lg text-[#666666]">
+              We&apos;re Recruiting Graduate Students · 석사 · 박사 · 석·박사 통합과정
+            </p>
+
+            {/* 한국어 / English 2단 */}
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
+              {/* 한국어 */}
+              <div>
+                <span className="mb-4 inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047BB]">
+                  한국어
+                </span>
+                <p className="mb-6 text-base leading-relaxed text-[#666666]">
+                  홍익대학교 신소재공학과 첨단에너지소재연구실(AEML)에서 함께 연구할
+                  대학원생을 모집합니다. 우리 연구실은 이동욱 교수님의 지도 아래, 지속가능한
+                  에너지·환경 기술의 바탕이 되는 소재와 공정을 연구합니다.
+                </p>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">모집 과정</p>
+                <p className="mb-6 text-base leading-relaxed text-[#666666]">
+                  석사과정 · 박사과정 · 석·박사 통합과정
+                </p>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">주요 연구 분야</p>
+                <ul className="mb-6 space-y-2 text-base leading-relaxed text-[#666666]">
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>
+                      <strong className="font-semibold text-[#1A1A1A]">차세대 리튬전지 소재</strong>
+                      {" "}— 리튬 금속 전지, 고체·복합 전해질, 고니켈 양극
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>
+                      <strong className="font-semibold text-[#1A1A1A]">2차원(2D) 소재의 용액 공정·박막 코팅</strong>
+                      {" "}— 균일 습식 증착·건조 공정
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>
+                      <strong className="font-semibold text-[#1A1A1A]">전기화학 기반 에너지 변환</strong>
+                      {" "}— 전기화학 열전 소자, 슈퍼커패시터
+                    </span>
+                  </li>
+                </ul>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">지원 자격</p>
+                <ul className="mb-6 space-y-2 text-base leading-relaxed text-[#666666]">
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>신소재공학, 화학공학, 화학 등 관련 전공자</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>에너지 소재·이차전지 연구에 관심과 열정이 있는 분</span>
+                  </li>
+                </ul>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">지원 방법</p>
+                <p className="text-base leading-relaxed text-[#666666]">
+                  이력서(CV)와 성적증명서를 첨부하여 아래 이메일로 문의해 주세요.
+                </p>
+              </div>
+
+              {/* English */}
+              <div className="lg:border-l lg:border-[#E5E5E5] lg:pl-12">
+                <span className="mb-4 inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047BB]">
+                  English
+                </span>
+                <p className="mb-6 text-base leading-relaxed text-[#666666]">
+                  The Advanced Energy Materials Laboratory (AEML), Department of Materials
+                  Science and Engineering at Hongik University, is seeking motivated graduate
+                  students. Under the guidance of Prof. Dongwook Lee, our lab studies the
+                  materials and processes underlying sustainable energy and environmental
+                  technologies.
+                </p>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">Positions</p>
+                <p className="mb-6 text-base leading-relaxed text-[#666666]">
+                  MS · PhD · Integrated MS–PhD programs
+                </p>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">Research Areas</p>
+                <ul className="mb-6 space-y-2 text-base leading-relaxed text-[#666666]">
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>
+                      <strong className="font-semibold text-[#1A1A1A]">Next-generation lithium battery materials</strong>
+                      {" "}— Li-metal batteries, solid/composite electrolytes, high-Ni cathodes
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>
+                      <strong className="font-semibold text-[#1A1A1A]">Solution processing and thin-film coating of 2D materials</strong>
+                      {" "}— uniform wet deposition and drying
+                    </span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>
+                      <strong className="font-semibold text-[#1A1A1A]">Electrochemical energy conversion</strong>
+                      {" "}— electrochemical thermopower and supercapacitors
+                    </span>
+                  </li>
+                </ul>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">Qualifications</p>
+                <ul className="mb-6 space-y-2 text-base leading-relaxed text-[#666666]">
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>Background in materials science, chemical engineering, chemistry, or a related field</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-[#0047BB]">•</span>
+                    <span>Genuine interest and enthusiasm for energy materials and battery research</span>
+                  </li>
+                </ul>
+
+                <p className="mb-2 text-base font-bold text-[#1A1A1A]">How to Apply</p>
+                <p className="text-base leading-relaxed text-[#666666]">
+                  Please send your CV and academic transcript to the email below.
+                </p>
+              </div>
+            </div>
+
+            {/* 이메일 버튼 */}
+            <div className="mt-10 border-t border-[#E5E5E5] pt-8">
+              <a
+                href="mailto:dongwook@hongik.ac.kr"
+                className="inline-flex items-center justify-center bg-[#0047BB] px-8 py-4 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-[#003B99]"
+              >
+                지원 문의 · Email Prof. Dongwook Lee
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* 문의 안내 */}
         <section className="mx-auto mb-16 w-full max-w-[1440px] px-8 py-8 lg:px-16 lg:py-16">
           <div className="mx-auto max-w-[800px] border border-[#E5E5E5] bg-white p-10 text-left lg:p-12">

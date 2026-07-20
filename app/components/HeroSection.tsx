@@ -4,7 +4,7 @@ import Link from "next/link";
  * Hero Section 컴포넌트
  * - 메인 페이지 상단의 영웅 영역
  * - 좌측: 텍스트 콘텐츠 (라벨, 제목, 부제, 슬로건, CTA 버튼 2개)
- * - 우측: 배터리 SVG 그래픽 (떠다니는 애니메이션)
+ * - 우측: 배터리 SVG 그래픽 (에너지 필드 링 + 부유 애니메이션)
  */
 export default function HeroSection() {
   return (
@@ -69,23 +69,23 @@ export default function HeroSection() {
           <defs>
             {/* 배터리 안쪽 충전 그라데이션 */}
             <linearGradient id="batteryFill" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#0047BB" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#66A3FF" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#0047BB" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#66A3FF" stopOpacity="0.65" />
             </linearGradient>
 
             {/* 배터리 외관 그라데이션 */}
             <linearGradient id="batteryBodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#F8F9FA" />
+              <stop offset="0%" stopColor="#F4F7FC" />
               <stop offset="50%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#F8F9FA" />
+              <stop offset="100%" stopColor="#F4F7FC" />
             </linearGradient>
 
             {/* 그림자 필터 */}
             <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="15" />
-              <feOffset dx="0" dy="20" result="offsetblur" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="14" />
+              <feOffset dx="0" dy="18" result="offsetblur" />
               <feComponentTransfer>
-                <feFuncA type="linear" slope="0.15" />
+                <feFuncA type="linear" slope="0.14" />
               </feComponentTransfer>
               <feMerge>
                 <feMergeNode />
@@ -95,54 +95,94 @@ export default function HeroSection() {
 
             {/* 글로우 효과 */}
             <radialGradient id="batteryGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#0047BB" stopOpacity="0.08" />
+              <stop offset="0%" stopColor="#0047BB" stopOpacity="0.10" />
               <stop offset="100%" stopColor="#0047BB" stopOpacity="0" />
             </radialGradient>
           </defs>
 
-          {/* 배터리 아래 글로우 */}
-          <ellipse
-            cx="200"
-            cy="420"
-            rx="120"
-            ry="30"
-            fill="url(#batteryGlow)"
-            className="animate-pulse-glow"
-          />
+          {/* 에너지 필드: 고정 동심원 링 */}
+          <circle cx="200" cy="246" r="185" fill="none" stroke="#0047BB" strokeOpacity="0.08" strokeWidth="1" />
+          <circle cx="200" cy="246" r="112" fill="none" stroke="#0047BB" strokeOpacity="0.10" strokeWidth="1" />
+
+          {/* 중앙 글로우 (은은하게 맥동) */}
+          <circle cx="200" cy="246" r="150" fill="url(#batteryGlow)" className="animate-pulse-glow" />
+
+          {/* 천천히 회전하는 점선 링 + 에너지 노드 */}
+          <g>
+            <animateTransform
+              attributeName="transform"
+              attributeType="XML"
+              type="rotate"
+              from="0 200 246"
+              to="360 200 246"
+              dur="48s"
+              repeatCount="indefinite"
+            />
+            <circle
+              cx="200"
+              cy="246"
+              r="150"
+              fill="none"
+              stroke="#0047BB"
+              strokeOpacity="0.14"
+              strokeWidth="1.5"
+              strokeDasharray="2 12"
+              strokeLinecap="round"
+            />
+            <circle cx="200" cy="96" r="4" fill="#0047BB" fillOpacity="0.5" />
+            <circle cx="350" cy="246" r="3" fill="#0047BB" fillOpacity="0.35" />
+            <circle cx="200" cy="396" r="3" fill="#0047BB" fillOpacity="0.35" />
+            <circle cx="50" cy="246" r="4" fill="#0047BB" fillOpacity="0.5" />
+          </g>
+
+          {/* 주변 작은 에너지 입자 */}
+          <circle cx="300" cy="140" r="2.5" fill="#0047BB" fillOpacity="0.3" />
+          <circle cx="110" cy="360" r="2.5" fill="#0047BB" fillOpacity="0.3" />
+          <circle cx="320" cy="330" r="2" fill="#0047BB" fillOpacity="0.25" />
+          <circle cx="90" cy="150" r="2" fill="#0047BB" fillOpacity="0.25" />
+
+          {/* 바닥 그림자 (고정) */}
+          <ellipse cx="200" cy="412" rx="72" ry="14" fill="#0047BB" fillOpacity="0.06" />
 
           {/* 배터리 본체 (떠다니는 애니메이션 적용) */}
           <g className="animate-float-battery">
-            {/* 상단 캡 (양극 단자) */}
-            <rect x="155" y="30" width="90" height="25" rx="5" fill="#0047BB" />
-            <rect x="140" y="50" width="120" height="40" rx="8" fill="#0047BB" />
+            {/* 양극 단자 */}
+            <rect x="184" y="78" width="32" height="12" rx="4" fill="#0047BB" />
 
             {/* 본체 (외관) */}
             <rect
-              x="130"
-              y="80"
-              width="140"
-              height="320"
-              rx="16"
+              x="152"
+              y="90"
+              width="96"
+              height="300"
+              rx="24"
               fill="url(#batteryBodyGrad)"
               stroke="#0047BB"
-              strokeWidth="2"
+              strokeWidth="2.5"
               filter="url(#softShadow)"
             />
 
-            {/* 충전 게이지 (안쪽 파란 부분) */}
+            {/* 충전 게이지 (약 72%) */}
             <rect
-              x="140"
-              y="160"
-              width="120"
-              height="225"
-              rx="10"
+              x="162"
+              y="188"
+              width="76"
+              height="192"
+              rx="16"
               fill="url(#batteryFill)"
             />
 
-            {/* 충전 게이지 라인 */}
-            <rect x="135" y="280" width="130" height="1" fill="#0047BB" fillOpacity="0.15" />
-            <rect x="135" y="310" width="130" height="1" fill="#0047BB" fillOpacity="0.15" />
-            <rect x="135" y="340" width="130" height="1" fill="#0047BB" fillOpacity="0.15" />
+            {/* 번개 심볼 (AEML 로고 모티프) */}
+            <path
+              d="M206 200 L178 266 L196 266 L190 332 L228 250 L208 250 Z"
+              fill="#FFFFFF"
+              fillOpacity="0.92"
+            />
+
+            {/* 충전 눈금 */}
+            <rect x="164" y="250" width="72" height="1.5" fill="#0047BB" fillOpacity="0.12" />
+            <rect x="164" y="290" width="72" height="1.5" fill="#0047BB" fillOpacity="0.12" />
+            <rect x="164" y="330" width="72" height="1.5" fill="#0047BB" fillOpacity="0.12" />
           </g>
         </svg>
       </div>

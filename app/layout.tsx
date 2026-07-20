@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import RecruitmentPopup from "./components/RecruitmentPopup";
 import { getLogoByName } from "@/app/lib/notion";
 
 // Inter 폰트 로드 (Google Fonts에서 자동으로 가져옴)
@@ -39,6 +40,7 @@ export default async function RootLayout({
           logoUrl={footerLogo?.imageUrl ?? null}
           hongikLogoUrl={hongikLogo?.imageUrl ?? null}
         />
+        <RecruitmentPopup />
       </body>
     </html>
   );

@@ -63,8 +63,39 @@ function ArticleCard({ article }: { article: JournalArticle }) {
   const pdfRaw = article.pdfUrl?.trim();
   const pdfIsInternal = pdfRaw ? isAppInternalPath(pdfRaw) : false;
 
+  // 상태: "Published"가 아니면(그리고 값이 있으면) 심사 중 등으로 간주 → 노란 배지
+  const status = (article.status || "").trim();
+  const isUnpublished = status !== "" && status.toLowerCase() !== "published";
+
+  // DOI가 있을 때만 카드 전체를 클릭 가능하게 (클릭 강조도 이때만 표시)
+  const clickable = Boolean(doiLink);
+
+  // 저널명/연도/권을 있는 것만 쉼표로 이어붙임 (없으면 앞 쉼표 방지)
+  const details = [
+    article.year ? String(article.year) : null,
+    article.volume ? String(article.volume) : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
+  const hasJournalLine = Boolean(article.journal) || Boolean(details);
+
   return (
-    <article className="group -mx-4 flex flex-col gap-4 rounded-xl border-b border-gray-100 px-4 py-8 transition-colors duration-200 hover:bg-[#0047BB]/5 sm:-mx-6 sm:flex-row sm:gap-8 sm:px-6">
+    <article
+      className={`group relative -mx-4 flex flex-col gap-4 border-b border-gray-100 px-4 py-8 transition-colors duration-200 sm:-mx-6 sm:flex-row sm:gap-8 sm:px-6 ${
+        clickable ? "cursor-pointer hover:bg-[#0047BB]/5" : ""
+      }`}
+    >
+      {/* DOI가 있으면 카드 전체를 링크로 (겹쳐진 투명 링크) */}
+      {doiLink ? (
+        <a
+          href={doiLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${article.title} — DOI 열기`}
+          className="absolute inset-0 z-0"
+        />
+      ) : null}
+
       <div className="w-[100px] shrink-0">
         <div className="text-2xl font-bold text-[#1A1A1A] lg:text-3xl">{article.year}</div>
         <div className="mt-1 text-xs font-bold uppercase tracking-wider text-[#0047BB]">
@@ -73,7 +104,18 @@ function ArticleCard({ article }: { article: JournalArticle }) {
       </div>
 
       <div className="flex-1">
-        <h3 className="mb-2 text-lg font-bold leading-snug text-[#1A1A1A] transition-colors duration-200 group-hover:text-[#0047BB] lg:text-xl">
+        {/* 미게재(심사 중 등) 논문 노란 배지 */}
+        {isUnpublished ? (
+          <span className="mb-2 inline-flex items-center rounded-full bg-[#FEF3C7] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#92400E]">
+            {status}
+          </span>
+        ) : null}
+
+        <h3
+          className={`mb-2 text-lg font-bold leading-snug text-[#1A1A1A] transition-colors duration-200 lg:text-xl ${
+            clickable ? "group-hover:text-[#0047BB]" : ""
+          }`}
+        >
           {article.title}
         </h3>
 
@@ -86,13 +128,16 @@ function ArticleCard({ article }: { article: JournalArticle }) {
           ))}
         </p>
 
-        <p className="text-sm text-[#666666]">
-          <span className="italic">{article.journal}</span>
-          {article.year ? `, ${article.year}` : ""}
-          {article.volume ? `, ${article.volume}` : ""}
-        </p>
+        {hasJournalLine ? (
+          <p className="text-sm text-[#666666]">
+            {article.journal ? <span className="italic">{article.journal}</span> : null}
+            {article.journal && details ? ", " : ""}
+            {details}
+          </p>
+        ) : null}
 
-        <div className="mt-3 flex flex-wrap items-center gap-4">
+        {/* 개별 링크/배지는 카드 링크 위에 오도록 relative z-10 */}
+        <div className="relative z-10 mt-3 flex flex-wrap items-center gap-4">
           {doiLink ? (
             <a
               href={doiLink}
